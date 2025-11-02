@@ -1,0 +1,39 @@
+<div class="login-page">
+  <div class="login-left">
+    <div class="logo">IPJI</div>
+    <h1>Bienvenido,</h1>
+    <p class="subtitle">Tu nuevo estilo de vida comienza aquí</p>
+
+    <form (ngSubmit)="onLogin()">
+      <div class="form-group">
+        <label>Usuario</label>
+        <input type="text" [(ngModel)]="username" name="username" required placeholder="AngelitoPollito" />
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" [(ngModel)]="password" name="password" required placeholder="hola123*" />
+      </div>
+
+      <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+      <button type="submit" class="login-btn" [disabled]="isLoading">
+        {{ isLoading ? 'Cargando...' : 'Iniciar Sesión' }}
+      </button>
+    </form>
+  </div>
+
+  <div class="login-right">
+    <div class="register-card">
+      <h2>¿Eres nuevo?</h2>
+      <p>¡Regístrate y descubre los beneficios!</p>
+      <button (click)="goToRegister()" class="register-btn">Registrarse</button>
+    </div>
+
+    <div class="company-card">
+      <h2>¿Tienes una empresa?</h2>
+      <p>Habla con nuestro personal especializado</p>
+      <button class="contact-btn">Contáctanos</button>
+    </div>
+  </div>
+</div>

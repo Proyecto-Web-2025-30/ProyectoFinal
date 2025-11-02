@@ -1,0 +1,307 @@
+/* Global Styles - IPJI Theme */
+:root {
+  --primary-yellow: #d4ff00;
+  --secondary-yellow: #e5ff33;
+  --dark-text: #1a1a1a;
+  --light-bg: #ffffff;
+  --gray-bg: #f5f5f5;
+  --border-color: #e0e0e0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--light-bg);
+  color: var(--dark-text);
+  min-height: 100vh;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: var(--light-bg);
+  border-radius: 8px;
+  border-bottom: 3px solid var(--primary-yellow);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2, h3 {
+  margin: 10px 0;
+  color: var(--dark-text);
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+button {
+  padding: 12px 24px;
+  margin: 5px;
+  background-color: var(--primary-yellow);
+  color: var(--dark-text);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--secondary-yellow);
+}
+
+button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--dark-text);
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--light-bg);
+  color: var(--dark-text);
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-yellow);
+}
+
+.form-group input::placeholder {
+  color: #999;
+}
+
+.error {
+  color: #d32f2f;
+  margin: 15px 0;
+  padding: 15px;
+  background-color: #ffebee;
+  border-radius: 6px;
+  border-left: 4px solid #d32f2f;
+}
+
+.success {
+  color: #388e3c;
+  margin: 15px 0;
+  padding: 15px;
+  background-color: #e8f5e9;
+  border-radius: 6px;
+  border-left: 4px solid #388e3c;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: var(--light-bg);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+table th,
+table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+table th {
+  background-color: var(--primary-yellow);
+  font-weight: 700;
+  color: var(--dark-text);
+  font-size: 12px;
+}
+
+table td {
+  color: var(--dark-text);
+}
+
+table tr:hover {
+  background-color: var(--gray-bg);
+}
+
+table tr:last-child td {
+  border-bottom: none;
+}
+
+nav {
+  margin: 20px 0;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+nav button {
+  flex: 1;
+  min-width: 150px;
+}
+
+.tabs {
+  display: flex;
+  gap: 5px;
+  margin: 20px 0;
+  background-color: var(--gray-bg);
+  padding: 5px;
+  border-radius: 8px;
+}
+
+.tabs button {
+  background-color: transparent;
+  color: var(--dark-text);
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.tabs button:hover {
+  background-color: var(--secondary-yellow);
+}
+
+.tabs button.active {
+  background-color: var(--primary-yellow);
+  color: var(--dark-text);
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.stat-card {
+  flex: 1;
+  padding: 25px;
+  background-color: var(--light-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  border-color: var(--primary-yellow);
+}
+
+.stat-card h3 {
+  margin-top: 0;
+  color: var(--dark-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.stat-card p {
+  font-size: 48px;
+  font-weight: 700;
+  margin: 10px 0;
+  color: var(--dark-text);
+}
+
+/* Landing Page Styles */
+.landing-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.landing-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.landing-header h1 {
+  font-size: 48px;
+  margin-bottom: 15px;
+  font-weight: 700;
+  color: var(--dark-text);
+}
+
+.subtitle {
+  font-size: 20px;
+  color: #666;
+  font-weight: 400;
+}
+
+.hero {
+  text-align: center;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background-color: var(--primary-yellow);
+  color: var(--dark-text);
+  font-size: 18px;
+  padding: 18px 40px;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-yellow);
+}
+
+.btn-secondary {
+  background-color: var(--light-bg);
+  color: var(--dark-text);
+  font-size: 18px;
+  padding: 18px 40px;
+  font-weight: 600;
+  border: 2px solid var(--primary-yellow);
+}
+
+.btn-secondary:hover {
+  background-color: var(--gray-bg);
+}

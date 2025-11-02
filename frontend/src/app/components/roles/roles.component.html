@@ -1,0 +1,52 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+  <h1>Manage Roles</h1>
+
+  <div *ngIf="!showForm">
+    <button (click)="showCreateForm()">Create New Role</button>
+    
+    <div *ngIf="isLoading">Loading...</div>
+
+    <table *ngIf="!isLoading && roles.length > 0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let role of roles">
+          <td>{{ role.name }}</td>
+          <td>{{ role.description }}</td>
+          <td>
+            <button (click)="showEditForm(role)">Edit</button>
+            <button (click)="deleteRole(role)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p *ngIf="!isLoading && roles.length === 0">No roles yet. Create one to get started!</p>
+  </div>
+
+  <div *ngIf="showForm">
+    <h2>{{ editingRole ? 'Edit Role' : 'Create Role' }}</h2>
+    
+    <form (ngSubmit)="saveRole()">
+      <div class="form-group">
+        <label>Name:</label>
+        <input type="text" [(ngModel)]="name" name="name" required />
+      </div>
+
+      <div class="form-group">
+        <label>Description:</label>
+        <textarea [(ngModel)]="description" name="description" rows="3"></textarea>
+      </div>
+
+      <button type="submit">Save</button>
+      <button type="button" (click)="cancelForm()">Cancel</button>
+    </form>
+  </div>
+</div>

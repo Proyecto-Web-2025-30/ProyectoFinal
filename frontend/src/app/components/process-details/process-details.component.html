@@ -1,0 +1,193 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+  <h1>Process Details: {{ process?.name }}</h1>
+
+  <div class="tabs">
+    <button [class.active]="activeTab === 'activities'" (click)="activeTab = 'activities'">Activities</button>
+    <button [class.active]="activeTab === 'gateways'" (click)="activeTab = 'gateways'">Gateways</button>
+    <button [class.active]="activeTab === 'arcs'" (click)="activeTab = 'arcs'">Arcs</button>
+  </div>
+
+  <!-- Activities Tab -->
+  <div *ngIf="activeTab === 'activities'">
+    <div *ngIf="!showActivityForm">
+      <button (click)="showCreateActivityForm()">Add Activity</button>
+      
+      <table *ngIf="activities.length > 0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let activity of activities">
+            <td>{{ activity.id }}</td>
+            <td>{{ activity.name }}</td>
+            <td>{{ activity.activityType }}</td>
+            <td>{{ activity.description }}</td>
+            <td>
+              <button (click)="showEditActivityForm(activity)">Edit</button>
+              <button (click)="deleteActivity(activity)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <p *ngIf="activities.length === 0">No activities yet.</p>
+    </div>
+
+    <div *ngIf="showActivityForm">
+      <h3>{{ editingActivity ? 'Edit Activity' : 'New Activity' }}</h3>
+      <form (ngSubmit)="saveActivity()">
+        <div class="form-group">
+          <label>Name:</label>
+          <input type="text" [(ngModel)]="activityName" name="name" required />
+        </div>
+        <div class="form-group">
+          <label>Type:</label>
+          <input type="text" [(ngModel)]="activityType" name="type" />
+        </div>
+        <div class="form-group">
+          <label>Description:</label>
+          <textarea [(ngModel)]="activityDescription" name="description"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Responsible Role:</label>
+          <select [(ngModel)]="activityRoleId" name="roleId">
+            <option [value]="null">-- No role --</option>
+            <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+          </select>
+        </div>
+        <button type="submit">Save</button>
+        <button type="button" (click)="cancelActivityForm()">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Gateways Tab -->
+  <div *ngIf="activeTab === 'gateways'">
+    <div *ngIf="!showGatewayForm">
+      <button (click)="showCreateGatewayForm()">Add Gateway</button>
+      
+      <table *ngIf="gateways.length > 0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Conditions</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let gateway of gateways">
+            <td>{{ gateway.id }}</td>
+            <td>{{ gateway.name }}</td>
+            <td>{{ gateway.gatewayType }}</td>
+            <td>{{ gateway.conditions }}</td>
+            <td>
+              <button (click)="showEditGatewayForm(gateway)">Edit</button>
+              <button (click)="deleteGateway(gateway)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <p *ngIf="gateways.length === 0">No gateways yet.</p>
+    </div>
+
+    <div *ngIf="showGatewayForm">
+      <h3>{{ editingGateway ? 'Edit Gateway' : 'New Gateway' }}</h3>
+      <form (ngSubmit)="saveGateway()">
+        <div class="form-group">
+          <label>Name:</label>
+          <input type="text" [(ngModel)]="gatewayName" name="name" required />
+        </div>
+        <div class="form-group">
+          <label>Type:</label>
+          <select [(ngModel)]="gatewayType" name="type">
+            <option value="EXCLUSIVE">Exclusive</option>
+            <option value="PARALLEL">Parallel</option>
+            <option value="INCLUSIVE">Inclusive</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Conditions:</label>
+          <textarea [(ngModel)]="gatewayConditions" name="conditions"></textarea>
+        </div>
+        <button type="submit">Save</button>
+        <button type="button" (click)="cancelGatewayForm()">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Arcs Tab -->
+  <div *ngIf="activeTab === 'arcs'">
+    <div *ngIf="!showArcForm">
+      <button (click)="showCreateArcForm()">Add Arc</button>
+      
+      <table *ngIf="arcs.length > 0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Source Type</th>
+            <th>Source ID</th>
+            <th>Target Type</th>
+            <th>Target ID</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let arc of arcs">
+            <td>{{ arc.id }}</td>
+            <td>{{ arc.sourceType }}</td>
+            <td>{{ arc.sourceId }}</td>
+            <td>{{ arc.targetType }}</td>
+            <td>{{ arc.targetId }}</td>
+            <td>
+              <button (click)="showEditArcForm(arc)">Edit</button>
+              <button (click)="deleteArc(arc)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <p *ngIf="arcs.length === 0">No arcs yet.</p>
+    </div>
+
+    <div *ngIf="showArcForm">
+      <h3>{{ editingArc ? 'Edit Arc' : 'New Arc' }}</h3>
+      <form (ngSubmit)="saveArc()">
+        <div class="form-group">
+          <label>Source Type:</label>
+          <select [(ngModel)]="arcSourceType" name="sourceType">
+            <option value="ACTIVITY">Activity</option>
+            <option value="GATEWAY">Gateway</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Source ID:</label>
+          <input type="number" [(ngModel)]="arcSourceId" name="sourceId" required />
+        </div>
+        <div class="form-group">
+          <label>Target Type:</label>
+          <select [(ngModel)]="arcTargetType" name="targetType">
+            <option value="ACTIVITY">Activity</option>
+            <option value="GATEWAY">Gateway</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Target ID:</label>
+          <input type="number" [(ngModel)]="arcTargetId" name="targetId" required />
+        </div>
+        <button type="submit">Save</button>
+        <button type="button" (click)="cancelArcForm()">Cancel</button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<nav class="navbar">
+  <div class="navbar-left">
+    <div class="logo" (click)="goToDashboard()">IPJI</div>
+    <div class="nav-links">
+      <button (click)="goToDashboard()">Dashboard</button>
+      <button (click)="goToProcesses()">Processes</button>
+      <button (click)="goToRoles()">Roles</button>
+      <button (click)="goToUsers()">Users</button>
+    </div>
+  </div>
+  
+  <div class="navbar-right">
+    <span class="user-name">{{ currentUser?.fullName }}</span>
+    <span class="company-name">{{ currentUser?.companyName }}</span>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+</nav>

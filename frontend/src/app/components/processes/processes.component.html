@@ -1,0 +1,70 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+  <h1>Manage Processes</h1>
+
+  <div *ngIf="!showForm">
+    <button (click)="showCreateForm()">Create New Process</button>
+    
+    <div *ngIf="isLoading">Loading...</div>
+
+    <table *ngIf="!isLoading && processes.length > 0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let process of processes">
+          <td>{{ process.name }}</td>
+          <td>{{ process.description }}</td>
+          <td>{{ process.category }}</td>
+          <td>{{ process.status }}</td>
+          <td>
+            <button (click)="viewProcessDetails(process)">Details</button>
+            <button (click)="showEditForm(process)">Edit</button>
+            <button (click)="deleteProcess(process)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p *ngIf="!isLoading && processes.length === 0">No processes yet. Create one to get started!</p>
+  </div>
+
+  <div *ngIf="showForm">
+    <h2>{{ editingProcess ? 'Edit Process' : 'Create Process' }}</h2>
+    
+    <form (ngSubmit)="saveProcess()">
+      <div class="form-group">
+        <label>Name:</label>
+        <input type="text" [(ngModel)]="name" name="name" required />
+      </div>
+
+      <div class="form-group">
+        <label>Description:</label>
+        <textarea [(ngModel)]="description" name="description" rows="4"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Category:</label>
+        <input type="text" [(ngModel)]="category" name="category" />
+      </div>
+
+      <div class="form-group">
+        <label>Status:</label>
+        <select [(ngModel)]="status" name="status">
+          <option value="DRAFT">Draft</option>
+          <option value="PUBLISHED">Published</option>
+        </select>
+      </div>
+
+      <button type="submit">Save</button>
+      <button type="button" (click)="cancelForm()">Cancel</button>
+    </form>
+  </div>
+</div>
