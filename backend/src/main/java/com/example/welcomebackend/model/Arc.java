@@ -1,5 +1,6 @@
 package com.example.welcomebackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,6 +17,7 @@ public class Arc {
     private Long targetId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Process process;
 
     // getters and setters

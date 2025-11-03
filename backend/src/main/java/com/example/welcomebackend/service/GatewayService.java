@@ -4,6 +4,7 @@ import com.example.welcomebackend.model.Gateway;
 import com.example.welcomebackend.model.Process;
 import com.example.welcomebackend.repository.GatewayRepository;
 import com.example.welcomebackend.repository.ProcessRepository;
+import com.example.welcomebackend.repository.ArcRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,9 @@ public class GatewayService {
 
     @Autowired
     private ProcessRepository processRepository;
+
+    @Autowired
+    private ArcRepository arcRepository;
 
     @Transactional
     public Gateway createGateway(Long processId, Gateway gateway) {
@@ -41,6 +45,8 @@ public class GatewayService {
         gateway.setName(updatedGateway.getName());
         gateway.setGatewayType(updatedGateway.getGatewayType());
         gateway.setConditions(updatedGateway.getConditions());
+        gateway.setX(updatedGateway.getX());
+        gateway.setY(updatedGateway.getY());
         
         Process process = gateway.getProcess();
         process.setUpdatedAt(LocalDateTime.now());
@@ -58,6 +64,10 @@ public class GatewayService {
         process.setUpdatedAt(LocalDateTime.now());
         processRepository.save(process);
         
+        // Delete arcs that reference this gateway as source or target
+        arcRepository.deleteByProcessIdAndSourceTypeAndSourceId(process.getId(), "GATEWAY", gatewayId);
+        arcRepository.deleteByProcessIdAndTargetTypeAndTargetId(process.getId(), "GATEWAY", gatewayId);
+
         gatewayRepository.delete(gateway);
     }
 

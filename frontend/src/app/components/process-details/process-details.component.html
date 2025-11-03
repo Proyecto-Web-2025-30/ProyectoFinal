@@ -1,193 +1,99 @@
 <app-navbar></app-navbar>
 
-<div class="container">
-  <h1>Process Details: {{ process?.name }}</h1>
+<div class="designer">
+  <div class="sidebar" draggable="false">
+    <h3>Palette</h3>
+    <div class="palette-item activity" draggable="true"
+         (dragstart)="onPaletteDragStart($event, 'ACTIVITY')">Activity</div>
 
-  <div class="tabs">
-    <button [class.active]="activeTab === 'activities'" (click)="activeTab = 'activities'">Activities</button>
-    <button [class.active]="activeTab === 'gateways'" (click)="activeTab = 'gateways'">Gateways</button>
-    <button [class.active]="activeTab === 'arcs'" (click)="activeTab = 'arcs'">Arcs</button>
+    <div class="palette-gateway" draggable="true"
+         (dragstart)="onPaletteDragStart($event, 'GATEWAY:EXCLUSIVE')">
+      <div class="diamond"><span class="marker">×</span></div>
+      <span class="label">Exclusive Gateway</span>
+    </div>
+    <div class="palette-gateway" draggable="true"
+         (dragstart)="onPaletteDragStart($event, 'GATEWAY:PARALLEL')">
+      <div class="diamond"><span class="marker">＋</span></div>
+      <span class="label">Parallel Gateway</span>
+    </div>
+    <div class="palette-gateway" draggable="true"
+         (dragstart)="onPaletteDragStart($event, 'GATEWAY:INCLUSIVE')">
+      <div class="diamond"><span class="marker">◯</span></div>
+      <span class="label">Inclusive Gateway</span>
+    </div>
+    <div class="hint">Tip: Hold Shift and click source, then click target to create an arc. To delete an existing arc, try creating a new arc over the same source and target.</div>
   </div>
 
-  <!-- Activities Tab -->
-  <div *ngIf="activeTab === 'activities'">
-    <div *ngIf="!showActivityForm">
-      <button (click)="showCreateActivityForm()">Add Activity</button>
-      
-      <table *ngIf="activities.length > 0">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Description</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let activity of activities">
-            <td>{{ activity.id }}</td>
-            <td>{{ activity.name }}</td>
-            <td>{{ activity.activityType }}</td>
-            <td>{{ activity.description }}</td>
-            <td>
-              <button (click)="showEditActivityForm(activity)">Edit</button>
-              <button (click)="deleteActivity(activity)">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      
-      <p *ngIf="activities.length === 0">No activities yet.</p>
-    </div>
+  <div class="canvas-wrapper">
+    <div class="canvas"
+         #canvas
+         (dragover)="onCanvasDragOver($event)"
+         (drop)="onCanvasDrop($event)"
+         (click)="onCanvasClick($event)">
 
-    <div *ngIf="showActivityForm">
-      <h3>{{ editingActivity ? 'Edit Activity' : 'New Activity' }}</h3>
-      <form (ngSubmit)="saveActivity()">
-        <div class="form-group">
-          <label>Name:</label>
-          <input type="text" [(ngModel)]="activityName" name="name" required />
-        </div>
-        <div class="form-group">
-          <label>Type:</label>
-          <input type="text" [(ngModel)]="activityType" name="type" />
-        </div>
-        <div class="form-group">
-          <label>Description:</label>
-          <textarea [(ngModel)]="activityDescription" name="description"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Responsible Role:</label>
-          <select [(ngModel)]="activityRoleId" name="roleId">
-            <option [value]="null">-- No role --</option>
-            <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
-          </select>
-        </div>
-        <button type="submit">Save</button>
-        <button type="button" (click)="cancelActivityForm()">Cancel</button>
-      </form>
-    </div>
-  </div>
+      <svg class="edges" xmlns="http://www.w3.org/2000/svg">
+        <line *ngFor="let arc of arcs"
+              [attr.x1]="getEdgeX(arc.sourceType, arc.sourceId, arc.targetType, arc.targetId)"
+              [attr.y1]="getEdgeY(arc.sourceType, arc.sourceId, arc.targetType, arc.targetId)"
+              [attr.x2]="getEdgeX(arc.targetType, arc.targetId, arc.sourceType, arc.sourceId)"
+              [attr.y2]="getEdgeY(arc.targetType, arc.targetId, arc.sourceType, arc.sourceId)"
+              stroke="#999" stroke-width="2" marker-end="url(#arrow)" />
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#999" />
+          </marker>
+        </defs>
+      </svg>
 
-  <!-- Gateways Tab -->
-  <div *ngIf="activeTab === 'gateways'">
-    <div *ngIf="!showGatewayForm">
-      <button (click)="showCreateGatewayForm()">Add Gateway</button>
-      
-      <table *ngIf="gateways.length > 0">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Conditions</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let gateway of gateways">
-            <td>{{ gateway.id }}</td>
-            <td>{{ gateway.name }}</td>
-            <td>{{ gateway.gatewayType }}</td>
-            <td>{{ gateway.conditions }}</td>
-            <td>
-              <button (click)="showEditGatewayForm(gateway)">Edit</button>
-              <button (click)="deleteGateway(gateway)">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      
-      <p *ngIf="gateways.length === 0">No gateways yet.</p>
-    </div>
+      <div *ngFor="let a of activities"
+           class="node activity-node"
+           [class.selected]="isSelected('ACTIVITY', a.id)"
+           [style.left.px]="a.x || 40"
+           [style.top.px]="a.y || 40"
+           (click)="onNodeClick($event, 'ACTIVITY', a)"
+           (mousedown)="onNodeMouseDown($event, 'ACTIVITY', a)">
+        {{ a.name || 'Activity' }}
+      </div>
 
-    <div *ngIf="showGatewayForm">
-      <h3>{{ editingGateway ? 'Edit Gateway' : 'New Gateway' }}</h3>
-      <form (ngSubmit)="saveGateway()">
-        <div class="form-group">
-          <label>Name:</label>
-          <input type="text" [(ngModel)]="gatewayName" name="name" required />
-        </div>
-        <div class="form-group">
-          <label>Type:</label>
-          <select [(ngModel)]="gatewayType" name="type">
-            <option value="EXCLUSIVE">Exclusive</option>
-            <option value="PARALLEL">Parallel</option>
-            <option value="INCLUSIVE">Inclusive</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Conditions:</label>
-          <textarea [(ngModel)]="gatewayConditions" name="conditions"></textarea>
-        </div>
-        <button type="submit">Save</button>
-        <button type="button" (click)="cancelGatewayForm()">Cancel</button>
-      </form>
+      <div *ngFor="let g of gateways"
+           class="node gateway-node"
+           [class.selected]="isSelected('GATEWAY', g.id)"
+           [style.left.px]="g.x || 40"
+           [style.top.px]="g.y || 40"
+           (click)="onNodeClick($event, 'GATEWAY', g)"
+           (mousedown)="onNodeMouseDown($event, 'GATEWAY', g)">
+        <span class="marker">
+          {{ g.gatewayType === 'EXCLUSIVE' ? '×' : (g.gatewayType === 'PARALLEL' ? '＋' : '◯') }}
+        </span>
+      </div>
     </div>
   </div>
 
-  <!-- Arcs Tab -->
-  <div *ngIf="activeTab === 'arcs'">
-    <div *ngIf="!showArcForm">
-      <button (click)="showCreateArcForm()">Add Arc</button>
-      
-      <table *ngIf="arcs.length > 0">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Source Type</th>
-            <th>Source ID</th>
-            <th>Target Type</th>
-            <th>Target ID</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let arc of arcs">
-            <td>{{ arc.id }}</td>
-            <td>{{ arc.sourceType }}</td>
-            <td>{{ arc.sourceId }}</td>
-            <td>{{ arc.targetType }}</td>
-            <td>{{ arc.targetId }}</td>
-            <td>
-              <button (click)="showEditArcForm(arc)">Edit</button>
-              <button (click)="deleteArc(arc)">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      
-      <p *ngIf="arcs.length === 0">No arcs yet.</p>
+  <div class="inspector" *ngIf="selected">
+    <h3>Properties</h3>
+    <div *ngIf="selected.type === 'ACTIVITY'">
+      <label>Name</label>
+      <input [(ngModel)]="activityForm.name" />
+      <label>Type</label>
+      <input [(ngModel)]="activityForm.activityType" />
+      <label>Description</label>
+      <textarea [(ngModel)]="activityForm.description"></textarea>
+      <button (click)="saveSelected()">Save</button>
+      <button (click)="deleteSelected()">Delete</button>
     </div>
-
-    <div *ngIf="showArcForm">
-      <h3>{{ editingArc ? 'Edit Arc' : 'New Arc' }}</h3>
-      <form (ngSubmit)="saveArc()">
-        <div class="form-group">
-          <label>Source Type:</label>
-          <select [(ngModel)]="arcSourceType" name="sourceType">
-            <option value="ACTIVITY">Activity</option>
-            <option value="GATEWAY">Gateway</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Source ID:</label>
-          <input type="number" [(ngModel)]="arcSourceId" name="sourceId" required />
-        </div>
-        <div class="form-group">
-          <label>Target Type:</label>
-          <select [(ngModel)]="arcTargetType" name="targetType">
-            <option value="ACTIVITY">Activity</option>
-            <option value="GATEWAY">Gateway</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Target ID:</label>
-          <input type="number" [(ngModel)]="arcTargetId" name="targetId" required />
-        </div>
-        <button type="submit">Save</button>
-        <button type="button" (click)="cancelArcForm()">Cancel</button>
-      </form>
+    <div *ngIf="selected.type === 'GATEWAY'">
+      <label>Name</label>
+      <input [(ngModel)]="gatewayForm.name" />
+      <label>Type</label>
+      <select [(ngModel)]="gatewayForm.gatewayType">
+        <option value="EXCLUSIVE">Exclusive</option>
+        <option value="PARALLEL">Parallel</option>
+        <option value="INCLUSIVE">Inclusive</option>
+      </select>
+      <label>Conditions</label>
+      <textarea [(ngModel)]="gatewayForm.conditions"></textarea>
+      <button (click)="saveSelected()">Save</button>
+      <button (click)="deleteSelected()">Delete</button>
     </div>
   </div>
 </div>

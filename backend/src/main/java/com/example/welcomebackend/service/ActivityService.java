@@ -5,6 +5,7 @@ import com.example.welcomebackend.model.Process;
 import com.example.welcomebackend.model.Role;
 import com.example.welcomebackend.repository.ActivityRepository;
 import com.example.welcomebackend.repository.ProcessRepository;
+import com.example.welcomebackend.repository.ArcRepository;
 import com.example.welcomebackend.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class ActivityService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private ArcRepository arcRepository;
 
     @Transactional
     public Activity createActivity(Long processId, Activity activity, Long roleId) {
@@ -52,6 +56,8 @@ public class ActivityService {
         activity.setName(updatedActivity.getName());
         activity.setActivityType(updatedActivity.getActivityType());
         activity.setDescription(updatedActivity.getDescription());
+        activity.setX(updatedActivity.getX());
+        activity.setY(updatedActivity.getY());
         
         if (roleId != null) {
             Role role = roleRepository.findById(roleId)
@@ -75,6 +81,10 @@ public class ActivityService {
         process.setUpdatedAt(LocalDateTime.now());
         processRepository.save(process);
         
+        // Delete arcs that reference this activity as source or target
+        arcRepository.deleteByProcessIdAndSourceTypeAndSourceId(process.getId(), "ACTIVITY", activityId);
+        arcRepository.deleteByProcessIdAndTargetTypeAndTargetId(process.getId(), "ACTIVITY", activityId);
+
         activityRepository.delete(activity);
     }
 

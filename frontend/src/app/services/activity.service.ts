@@ -8,6 +8,8 @@ export interface Activity {
   activityType: string;
   description: string;
   roleId?: number;
+  x?: number;
+  y?: number;
 }
 
 @Injectable({
@@ -19,10 +21,12 @@ export class ActivityService {
   constructor(private http: HttpClient) {}
 
   createActivity(processId: number, activity: Activity): Observable<Activity> {
+    console.log(activity.x, activity.y);
     return this.http.post<Activity>(`${this.apiUrl}/process/${processId}`, activity);
   }
 
   updateActivity(activityId: number, activity: Activity): Observable<Activity> {
+    console.log(activity.x, activity.y);
     return this.http.put<Activity>(`${this.apiUrl}/${activityId}`, activity);
   }
 
@@ -35,6 +39,12 @@ export class ActivityService {
   }
 
   getActivitiesByProcess(processId: number): Observable<Activity[]> {
-    return this.http.get<Activity[]>(`${this.apiUrl}/process/${processId}`);
+    const activities = this.http.get<Activity[]>(`${this.apiUrl}/process/${processId}`);
+    activities.subscribe((activities) => {
+      for (const activity of activities) {
+        console.log(activity.name, activity.x, activity.y);
+      }
+    });
+    return activities;
   }
 }

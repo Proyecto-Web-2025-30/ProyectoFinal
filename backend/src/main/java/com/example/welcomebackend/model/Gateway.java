@@ -1,5 +1,6 @@
 package com.example.welcomebackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,7 +19,12 @@ public class Gateway {
     private String conditions;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Process process;
+
+    // Canvas coordinates
+    private Double x;
+    private Double y;
 
     // getters and setters
     public Long getId() { return id; }
@@ -31,6 +37,10 @@ public class Gateway {
     public void setConditions(String conditions) { this.conditions = conditions; }
     public Process getProcess() { return process; }
     public void setProcess(Process process) { this.process = process; }
+    public Double getX() { return x; }
+    public void setX(Double x) { this.x = x; }
+    public Double getY() { return y; }
+    public void setY(Double y) { this.y = y; }
 }
 
 enum GatewayType {

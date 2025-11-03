@@ -7,6 +7,8 @@ export interface Gateway {
   name: string;
   gatewayType: 'EXCLUSIVE' | 'PARALLEL' | 'INCLUSIVE';
   conditions: string;
+  x?: number;
+  y?: number;
 }
 
 @Injectable({
@@ -18,10 +20,14 @@ export class GatewayService {
   constructor(private http: HttpClient) {}
 
   createGateway(processId: number, gateway: Gateway): Observable<Gateway> {
+    console.log(gateway.x);
+    console.log(gateway.y);
     return this.http.post<Gateway>(`${this.apiUrl}/process/${processId}`, gateway);
   }
 
   updateGateway(gatewayId: number, gateway: Gateway): Observable<Gateway> {
+    console.log(gateway.x);
+    console.log(gateway.y);
     return this.http.put<Gateway>(`${this.apiUrl}/${gatewayId}`, gateway);
   }
 

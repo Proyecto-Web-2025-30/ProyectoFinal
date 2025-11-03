@@ -27,6 +27,13 @@ public class ActivityController {
             activity.setName((String) request.get("name"));
             activity.setActivityType((String) request.get("activityType"));
             activity.setDescription((String) request.get("description"));
+            System.out.println("Activity: " + activity.getName() + " " + activity.getX() + " " + activity.getY());
+            if (request.get("x") != null) {
+                activity.setX(Double.valueOf(request.get("x").toString()));
+            }
+            if (request.get("y") != null) {
+                activity.setY(Double.valueOf(request.get("y").toString()));
+            }
             
             Long roleId = request.get("roleId") != null ? 
                     Long.valueOf(request.get("roleId").toString()) : null;
@@ -49,6 +56,12 @@ public class ActivityController {
             activity.setName((String) request.get("name"));
             activity.setActivityType((String) request.get("activityType"));
             activity.setDescription((String) request.get("description"));
+            if (request.get("x") != null) {
+                activity.setX(Double.valueOf(request.get("x").toString()));
+            }
+            if (request.get("y") != null) {
+                activity.setY(Double.valueOf(request.get("y").toString()));
+            }
             
             Long roleId = request.get("roleId") != null ? 
                     Long.valueOf(request.get("roleId").toString()) : null;
@@ -78,7 +91,11 @@ public class ActivityController {
 
     @GetMapping("/process/{processId}")
     public ResponseEntity<List<Activity>> getActivitiesByProcess(@PathVariable Long processId) {
-        return ResponseEntity.ok(activityService.getActivitiesByProcess(processId));
+        List<Activity> activities = activityService.getActivitiesByProcess(processId);
+        for (Activity activity : activities) {
+            System.out.println("Activity: " + activity.getName() + " " + activity.getX() + " " + activity.getY());
+        }
+        return ResponseEntity.ok(activities);
     }
 
     @GetMapping("/{activityId}")
