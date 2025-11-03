@@ -1,11 +1,22 @@
 package com.example.welcomebackend.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class CreateUserRequest {
+    @NotBlank
     private String username;
-    private String email;
+
+    @Email
+    @NotBlank private String email;
+
+    @NotBlank @Size(min = 6, max = 100)
     private String password;
-    private String fullName;
-    private String userRole; // "ADMIN", "EDITOR", "READONLY"
+
+    @NotBlank private String fullName;
+
+    @NotBlank private String userRole; // "ADMIN", "EDITOR", "READONLY"
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }

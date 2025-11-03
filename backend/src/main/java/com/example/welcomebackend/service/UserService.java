@@ -17,17 +17,10 @@ import java.util.List;
 @Service
 public class UserService {
 
-    @Autowired
-    private AppUserRepository userRepository;
-
-    @Autowired
-    private CompanyRepository companyRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @Autowired private AppUserRepository userRepository;
+    @Autowired private CompanyRepository companyRepository;
+    @Autowired private RoleRepository roleRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
 
     @Transactional
     public AppUser createUser(Long companyId, CreateUserRequest request) {
@@ -37,7 +30,6 @@ public class UserService {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
-
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
@@ -62,9 +54,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     public List<AppUser> getUsersByCompany(Long companyId) {
-        return userRepository.findAll().stream()
-                .filter(u -> u.getCompany() != null && u.getCompany().getId().equals(companyId))
-                .toList();
+        return userRepository.findByCompany_Id(companyId);
     }
 }

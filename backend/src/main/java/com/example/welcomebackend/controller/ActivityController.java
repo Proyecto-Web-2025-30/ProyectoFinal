@@ -12,65 +12,54 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/activities")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200"})
 public class ActivityController {
 
     @Autowired
     private ActivityService activityService;
 
     @PostMapping("/process/{processId}")
-    public ResponseEntity<?> createActivity(
-            @PathVariable Long processId,
-            @RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> createActivity(@PathVariable Long processId,
+                                            @RequestBody Map<String, Object> request) {
         try {
             Activity activity = new Activity();
             activity.setName((String) request.get("name"));
             activity.setActivityType((String) request.get("activityType"));
             activity.setDescription((String) request.get("description"));
-            System.out.println("Activity: " + activity.getName() + " " + activity.getX() + " " + activity.getY());
-            if (request.get("x") != null) {
-                activity.setX(Double.valueOf(request.get("x").toString()));
-            }
-            if (request.get("y") != null) {
-                activity.setY(Double.valueOf(request.get("y").toString()));
-            }
-            
-            Long roleId = request.get("roleId") != null ? 
-                    Long.valueOf(request.get("roleId").toString()) : null;
-            
+
+            if (request.get("x") != null) activity.setX(Double.valueOf(request.get("x").toString()));
+            if (request.get("y") != null) activity.setY(Double.valueOf(request.get("y").toString()));
+
+            Long roleId = request.get("roleId") != null ? Long.valueOf(request.get("roleId").toString()) : null;
+
             Activity created = activityService.createActivity(processId, activity, roleId);
             return ResponseEntity.ok(created);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException ex) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
+            error.put("error", ex.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
     }
 
     @PutMapping("/{activityId}")
-    public ResponseEntity<?> updateActivity(
-            @PathVariable Long activityId,
-            @RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> updateActivity(@PathVariable Long activityId,
+                                            @RequestBody Map<String, Object> request) {
         try {
             Activity activity = new Activity();
             activity.setName((String) request.get("name"));
             activity.setActivityType((String) request.get("activityType"));
             activity.setDescription((String) request.get("description"));
-            if (request.get("x") != null) {
-                activity.setX(Double.valueOf(request.get("x").toString()));
-            }
-            if (request.get("y") != null) {
-                activity.setY(Double.valueOf(request.get("y").toString()));
-            }
-            
-            Long roleId = request.get("roleId") != null ? 
-                    Long.valueOf(request.get("roleId").toString()) : null;
-            
+
+            if (request.get("x") != null) activity.setX(Double.valueOf(request.get("x").toString()));
+            if (request.get("y") != null) activity.setY(Double.valueOf(request.get("y").toString()));
+
+            Long roleId = request.get("roleId") != null ? Long.valueOf(request.get("roleId").toString()) : null;
+
             Activity updated = activityService.updateActivity(activityId, activity, roleId);
             return ResponseEntity.ok(updated);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException ex) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
+            error.put("error", ex.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
     }
@@ -82,30 +71,25 @@ public class ActivityController {
             Map<String, String> response = new HashMap<>();
             response.put("message", "Activity deleted successfully");
             return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException ex) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
+            error.put("error", ex.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
     }
 
     @GetMapping("/process/{processId}")
     public ResponseEntity<List<Activity>> getActivitiesByProcess(@PathVariable Long processId) {
-        List<Activity> activities = activityService.getActivitiesByProcess(processId);
-        for (Activity activity : activities) {
-            System.out.println("Activity: " + activity.getName() + " " + activity.getX() + " " + activity.getY());
-        }
-        return ResponseEntity.ok(activities);
+        return ResponseEntity.ok(activityService.getActivitiesByProcess(processId));
     }
 
     @GetMapping("/{activityId}")
     public ResponseEntity<?> getActivity(@PathVariable Long activityId) {
         try {
-            Activity activity = activityService.getActivityById(activityId);
-            return ResponseEntity.ok(activity);
-        } catch (RuntimeException e) {
+            return ResponseEntity.ok(activityService.getActivityById(activityId));
+        } catch (RuntimeException ex) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
+            error.put("error", ex.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
     }

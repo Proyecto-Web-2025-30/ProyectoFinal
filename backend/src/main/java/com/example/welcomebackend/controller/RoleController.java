@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/roles")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = { "http://localhost:4200"  })
 public class RoleController {
 
     @Autowired
@@ -28,12 +28,11 @@ public class RoleController {
             response.put("id", created.getId());
             response.put("name", created.getName());
             return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException ex) {
             Map<String, Object> error = new HashMap<>();
             error.put("success", false);
-            error.put("error", e.getMessage());
-            error.put("details", "Failed to create role. Make sure name and description are provided.");
-            e.printStackTrace(); // Log the full error
+            error.put("error", ex.getMessage());
+            error.put("details", "Failed to create role.");
             return ResponseEntity.badRequest().body(error);
         }
     }
@@ -41,11 +40,10 @@ public class RoleController {
     @PutMapping("/{roleId}")
     public ResponseEntity<?> updateRole(@PathVariable Long roleId, @RequestBody Role role) {
         try {
-            Role updated = roleService.updateRole(roleId, role);
-            return ResponseEntity.ok(updated);
-        } catch (RuntimeException e) {
+            return ResponseEntity.ok(roleService.updateRole(roleId, role));
+        } catch (RuntimeException ex) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
+            error.put("error", ex.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
     }
@@ -57,9 +55,9 @@ public class RoleController {
             Map<String, String> response = new HashMap<>();
             response.put("message", "Role deleted successfully");
             return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException ex) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
+            error.put("error", ex.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
     }
@@ -72,11 +70,10 @@ public class RoleController {
     @GetMapping("/{roleId}")
     public ResponseEntity<?> getRole(@PathVariable Long roleId) {
         try {
-            Role role = roleService.getRoleById(roleId);
-            return ResponseEntity.ok(role);
-        } catch (RuntimeException e) {
+            return ResponseEntity.ok(roleService.getRoleById(roleId));
+        } catch (RuntimeException ex) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
+            error.put("error", ex.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
     }

@@ -8,12 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = { "http://localhost:4200" })
 public class AuthController {
 
     @Autowired
@@ -23,9 +24,8 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        AppUser user = userRepository.findByUsername(request.getUsername())
-                .orElse(null);
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+        AppUser user = userRepository.findByUsername(request.getUsername()).orElse(null);
 
         if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             Map<String, String> error = new HashMap<>();
@@ -39,9 +39,15 @@ public class AuthController {
         response.put("username", user.getUsername());
         response.put("email", user.getEmail());
         response.put("fullName", user.getFullName());
-        response.put("companyId", user.getCompany().getId());
-        response.put("companyName", user.getCompany().getName());
-        
+
+        if (user.getCompany() != null) {
+            response.put("companyId", user.getCompany().getId());
+            response.put("companyName", user.getCompany().getName());
+        } else {
+            response.put("companyId", null);
+            response.put("companyName", null);
+        }
+
         return ResponseEntity.ok(response);
     }
 }
