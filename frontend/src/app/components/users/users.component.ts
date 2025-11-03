@@ -14,6 +14,8 @@ import { NavbarComponent } from '../navbar/navbar.component';
 })
 export class UsersComponent implements OnInit {
   currentUser: User | null = null;
+  companyId!: number;
+
   users: AppUser[] = [];
   isLoading = false;
   showForm = false;
@@ -31,25 +33,41 @@ export class UsersComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.currentUser = this.authService.getCurrentUser();
+    // Fallback a localStorage para soportar refresh a las malas 
+    this.currentUser = this.authService.getCurrentUser()
+      ?? JSON.parse(localStorage.getItem('currentUser') || 'null');
+
     if (!this.currentUser) {
       this.router.navigate(['/login']);
       return;
     }
+
+    // Establecemos el companyId como número
+    this.companyId = Number(this.currentUser.companyId);
+    if (Number.isNaN(this.companyId)) {
+      console.error('CompanyId inválido');
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.loadUsers();
   }
 
+  private handleError(e: any) {
+    console.error('Users error:', e);
+    this.isLoading = false;
+    this.users = [];
+  }
+
   loadUsers() {
-    if (!this.currentUser) return;
     this.isLoading = true;
-    this.userService.getUsersByCompany(this.currentUser.companyId).subscribe({
+    this.userService.getUsersByCompany(this.companyId).subscribe({
       next: (data) => {
-        this.users = data;
+        // Por si el backend devolviera null 
+        this.users = Array.isArray(data) ? data : [];
         this.isLoading = false;
       },
-      error: () => {
-        this.isLoading = false;
-      }
+      error: (e) => this.handleError(e)
     });
   }
 
@@ -67,22 +85,20 @@ export class UsersComponent implements OnInit {
   }
 
   saveUser() {
-    if (!this.currentUser) return;
-
-    const user: CreateUserRequest = {
-      username: this.username,
-      email: this.email,
+    const payload: CreateUserRequest = {
+      username: this.username.trim(),
+      email: this.email.trim(),
       password: this.password,
-      fullName: this.fullName,
+      fullName: this.fullName.trim(),
       userRole: this.userRole
     };
 
-    this.userService.createUser(this.currentUser.companyId, user).subscribe({
+    this.userService.createUser(this.companyId, payload).subscribe({
       next: () => {
-        this.loadUsers();
+        this.loadUsers();   // Refresca la lista papi
         this.cancelForm();
       },
-      error: (err) => alert(err.error?.error || 'Error creating user')
+      error: (err) => alert(err?.error?.error || 'Error creating user')
     });
   }
 
