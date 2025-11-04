@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/arcs")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = { "http://localhost:4200" })
 public class ArcController {
 
     @Autowired
@@ -21,11 +21,10 @@ public class ArcController {
     @PostMapping("/process/{processId}")
     public ResponseEntity<?> createArc(@PathVariable Long processId, @RequestBody Arc arc) {
         try {
-            Arc created = arcService.createArc(processId, arc);
-            return ResponseEntity.ok(created);
-        } catch (RuntimeException e) {
+            return ResponseEntity.ok(arcService.createArc(processId, arc));
+        } catch (RuntimeException ex) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
+            error.put("error", ex.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
     }
@@ -33,11 +32,10 @@ public class ArcController {
     @PutMapping("/{arcId}")
     public ResponseEntity<?> updateArc(@PathVariable Long arcId, @RequestBody Arc arc) {
         try {
-            Arc updated = arcService.updateArc(arcId, arc);
-            return ResponseEntity.ok(updated);
-        } catch (RuntimeException e) {
+            return ResponseEntity.ok(arcService.updateArc(arcId, arc));
+        } catch (RuntimeException ex) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
+            error.put("error", ex.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
     }
@@ -49,9 +47,9 @@ public class ArcController {
             Map<String, String> response = new HashMap<>();
             response.put("message", "Arc deleted successfully");
             return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException ex) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
+            error.put("error", ex.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
     }
@@ -64,11 +62,10 @@ public class ArcController {
     @GetMapping("/{arcId}")
     public ResponseEntity<?> getArc(@PathVariable Long arcId) {
         try {
-            Arc arc = arcService.getArcById(arcId);
-            return ResponseEntity.ok(arc);
-        } catch (RuntimeException e) {
+            return ResponseEntity.ok(arcService.getArcById(arcId));
+        } catch (RuntimeException ex) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
+            error.put("error", ex.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
     }

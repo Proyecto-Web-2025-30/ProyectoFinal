@@ -17,34 +17,27 @@ import java.util.List;
 @Service
 public class ActivityService {
 
-    @Autowired
-    private ActivityRepository activityRepository;
-
-    @Autowired
-    private ProcessRepository processRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private ArcRepository arcRepository;
+    @Autowired private ActivityRepository activityRepository;
+    @Autowired private ProcessRepository processRepository;
+    @Autowired private RoleRepository roleRepository;
+    @Autowired private ArcRepository arcRepository;
 
     @Transactional
     public Activity createActivity(Long processId, Activity activity, Long roleId) {
         Process process = processRepository.findById(processId)
                 .orElseThrow(() -> new RuntimeException("Process not found"));
-        
+
         activity.setProcess(process);
-        
+
         if (roleId != null) {
             Role role = roleRepository.findById(roleId)
                     .orElseThrow(() -> new RuntimeException("Role not found"));
             activity.setResponsibleRole(role);
         }
-        
+
         process.setUpdatedAt(LocalDateTime.now());
         processRepository.save(process);
-        
+
         return activityRepository.save(activity);
     }
 
@@ -52,23 +45,23 @@ public class ActivityService {
     public Activity updateActivity(Long activityId, Activity updatedActivity, Long roleId) {
         Activity activity = activityRepository.findById(activityId)
                 .orElseThrow(() -> new RuntimeException("Activity not found"));
-        
+
         activity.setName(updatedActivity.getName());
         activity.setActivityType(updatedActivity.getActivityType());
         activity.setDescription(updatedActivity.getDescription());
         activity.setX(updatedActivity.getX());
         activity.setY(updatedActivity.getY());
-        
+
         if (roleId != null) {
             Role role = roleRepository.findById(roleId)
                     .orElseThrow(() -> new RuntimeException("Role not found"));
             activity.setResponsibleRole(role);
         }
-        
+
         Process process = activity.getProcess();
         process.setUpdatedAt(LocalDateTime.now());
         processRepository.save(process);
-        
+
         return activityRepository.save(activity);
     }
 
@@ -76,22 +69,24 @@ public class ActivityService {
     public void deleteActivity(Long activityId) {
         Activity activity = activityRepository.findById(activityId)
                 .orElseThrow(() -> new RuntimeException("Activity not found"));
-        
+
         Process process = activity.getProcess();
         process.setUpdatedAt(LocalDateTime.now());
         processRepository.save(process);
-        
-        // Delete arcs that reference this activity as source or target
+
+        // borra arcos relacionados
         arcRepository.deleteByProcessIdAndSourceTypeAndSourceId(process.getId(), "ACTIVITY", activityId);
         arcRepository.deleteByProcessIdAndTargetTypeAndTargetId(process.getId(), "ACTIVITY", activityId);
 
         activityRepository.delete(activity);
     }
 
+    @Transactional(readOnly = true)
     public List<Activity> getActivitiesByProcess(Long processId) {
         return activityRepository.findByProcessId(processId);
     }
 
+    @Transactional(readOnly = true)
     public Activity getActivityById(Long activityId) {
         return activityRepository.findById(activityId)
                 .orElseThrow(() -> new RuntimeException("Activity not found"));

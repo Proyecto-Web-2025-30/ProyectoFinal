@@ -1,13 +1,23 @@
 package com.example.welcomebackend.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class RegisterCompanyRequest {
-    private String companyName;
+    @NotBlank private String companyName;
+    @NotBlank
     private String nit;
-    private String contactEmail;
-    private String adminUsername;
-    private String adminEmail;
+    @Email  @NotBlank private String contactEmail;
+
+    @NotBlank private String adminUsername;
+    @Email
+    @NotBlank private String adminEmail;
+
+    @NotBlank @Size(min = 6, max = 100)
     private String adminPassword;
-    private String adminFullName;
+
+    @NotBlank private String adminFullName;
 
     // getters and setters
     public String getCompanyName() { return companyName; }

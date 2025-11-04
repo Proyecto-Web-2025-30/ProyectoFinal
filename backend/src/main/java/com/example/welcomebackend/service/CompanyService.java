@@ -15,28 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CompanyService {
 
-    @Autowired
-    private CompanyRepository companyRepository;
-
-    @Autowired
-    private AppUserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @Autowired private CompanyRepository companyRepository;
+    @Autowired private AppUserRepository userRepository;
+    @Autowired private RoleRepository roleRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
 
     @Transactional
     public Company registerCompany(RegisterCompanyRequest request) {
         if (companyRepository.existsByNit(request.getNit())) {
             throw new RuntimeException("Company with NIT already exists");
         }
-
         if (userRepository.existsByUsername(request.getAdminUsername())) {
             throw new RuntimeException("Username already exists");
         }
-
         if (userRepository.existsByEmail(request.getAdminEmail())) {
             throw new RuntimeException("Email already exists");
         }
@@ -47,14 +38,12 @@ public class CompanyService {
         company.setContactEmail(request.getContactEmail());
         company = companyRepository.save(company);
 
-        // Create ADMIN role for this company
         Role adminRole = new Role();
         adminRole.setName("ADMIN");
         adminRole.setDescription("Administrator role");
         adminRole.setCompany(company);
         adminRole = roleRepository.save(adminRole);
 
-        // Create admin user
         AppUser admin = new AppUser();
         admin.setUsername(request.getAdminUsername());
         admin.setEmail(request.getAdminEmail());

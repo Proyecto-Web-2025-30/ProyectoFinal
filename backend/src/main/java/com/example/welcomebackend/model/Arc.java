@@ -4,23 +4,34 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
+@Table(
+        name = "arcs",
+        indexes = { @Index(name = "idx_arc_process", columnList = "process_id") }
+)
 public class Arc {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String sourceType; // "ACTIVITY" or "GATEWAY"
+    // "ACTIVITY" o "GATEWAY"
+    @Column(length = 20, nullable = false)
+    private String sourceType;
+
     private Long sourceId;
 
-    private String targetType; // "ACTIVITY" or "GATEWAY"
+    // "ACTIVITY" o "GATEWAY"
+    @Column(length = 20, nullable = false)
+    private String targetType;
+
     private Long targetId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "process_id")
     @JsonIgnore
     private Process process;
 
-    // getters and setters
+    // getters & setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getSourceType() { return sourceType; }
