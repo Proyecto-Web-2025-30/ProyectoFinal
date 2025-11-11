@@ -3,12 +3,13 @@ package com.example.welcomebackend.controller;
 import com.example.welcomebackend.dto.LoginRequest;
 import com.example.welcomebackend.model.AppUser;
 import com.example.welcomebackend.repository.AppUserRepository;
+import com.example.welcomebackend.config.JwtTokenService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,11 +18,9 @@ import java.util.Map;
 @CrossOrigin(origins = { "http://localhost:4200" })
 public class AuthController {
 
-    @Autowired
-    private AppUserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @Autowired private AppUserRepository userRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private JwtTokenService jwtTokenService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
@@ -33,21 +32,19 @@ public class AuthController {
             return ResponseEntity.status(401).body(error);
         }
 
+        String token = jwtTokenService.generateToken(user);
+
         Map<String, Object> response = new HashMap<>();
-        response.put("message", "Login successful");
+        response.put("token", token);
+        response.put("tokenType", "Bearer");
         response.put("userId", user.getId());
         response.put("username", user.getUsername());
         response.put("email", user.getEmail());
         response.put("fullName", user.getFullName());
-
-        if (user.getCompany() != null) {
-            response.put("companyId", user.getCompany().getId());
-            response.put("companyName", user.getCompany().getName());
-        } else {
-            response.put("companyId", null);
-            response.put("companyName", null);
-        }
+        response.put("companyId", user.getCompany() != null ? user.getCompany().getId() : null);
+        response.put("companyName", user.getCompany() != null ? user.getCompany().getName() : null);
 
         return ResponseEntity.ok(response);
     }
 }
+
