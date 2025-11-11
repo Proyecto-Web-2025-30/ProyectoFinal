@@ -31,7 +31,7 @@ export class AuthService {
   login(request: LoginRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/auth/login`, request).pipe(
       tap((response: any) => {
-        // ⬅️ Guarda el JWT
+        //  Guarda el JWT
         localStorage.setItem('access_token', response.token);
 
         const user: User = {
