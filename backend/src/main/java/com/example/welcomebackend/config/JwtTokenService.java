@@ -41,6 +41,18 @@ public class JwtTokenService {
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
+    /**
+     * Extrae el username incluso cuando el token está expirado.
+     * Útil para flujos de renovación de token.
+     */
+    public String extractUsernameAllowExpired(String token) {
+        try {
+            return extractUsername(token);
+        } catch (ExpiredJwtException e) {
+            return e.getClaims().getSubject();
+        }
+    }
+
     public boolean isValid(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token);
